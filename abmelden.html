@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Abmelden · Lilo</title>
+<!--
+  Step 13c of the Lilo app: a business stops Lilo's requests.
+  Every email Lilo sends to a business links here as liloapp.de/abmelden#[code].
+  The code after "#" never reaches this website's server. When the business presses
+  the button, the page sends the code to Lilo's server function "optout" (Supabase,
+  Frankfurt), which puts the business on Lilo's opt-out list. No cookies, no
+  tracking, nothing stored in the browser.
+-->
+<style>
+:root {
+  --bg: #F4F3EF;
+  --surface: #FFFFFF;
+  --fg: #1D1C1A;
+  --muted: #6A665F;
+  --line: #E3E0DA;
+  --accent: #0E6B5C;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #0E6B5C1A;
+  --note: #9A5B00;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161615; --surface: #222120; --fg: #EDEBE6; --muted: #A39F97; --line: #34322F;
+    --accent: #5CC0AC; --accent-ink: #0D1F1B; --accent-soft: #5CC0AC1F; --note: #E0A54A; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161615; --surface: #222120; --fg: #EDEBE6; --muted: #A39F97; --line: #34322F;
+  --accent: #5CC0AC; --accent-ink: #0D1F1B; --accent-soft: #5CC0AC1F; --note: #E0A54A; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 1.0625rem; line-height: 1.55; }
+a { color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.top { border-bottom: 1px solid var(--line); }
+.top .wrap { min-height: 60px; display: flex; align-items: center; }
+.wrap { max-width: 640px; margin: 0 auto; padding-inline: 20px; }
+.brand { font-weight: 700; font-size: 1.375rem; letter-spacing: -0.02em; color: var(--fg); text-decoration: none; }
+main { padding-block: 48px 64px; }
+.card { background: var(--surface); border-radius: 18px; padding: 28px 24px; display: grid; gap: 16px; }
+h1 { margin: 0; font-size: 1.625rem; line-height: 1.2; letter-spacing: -0.01em; text-wrap: balance; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.btn { justify-self: start; display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: 14px; border: 0; font: inherit; font-weight: 600; cursor: pointer; background: var(--accent); color: var(--accent-ink); }
+.btn:hover { filter: brightness(1.08); }
+.btn[disabled] { opacity: .6; cursor: default; }
+.error { color: var(--note); }
+[hidden] { display: none !important; }
+footer { border-top: 1px solid var(--line); padding-block: 24px 40px; font-size: 0.875rem; }
+footer .wrap { display: flex; gap: 20px; flex-wrap: wrap; }
+@media (max-width: 520px) { .wrap { padding-inline: 16px; } main { padding-block: 32px 48px; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="brand" href="/">Lilo</a></div></header>
+<main>
+  <div class="wrap">
+    <div class="card" id="ask">
+      <h1>Keine Anfragen mehr über Lilo erhalten</h1>
+      <p>Lilo ist ein KI-Assistent, der für Menschen mit wenig Deutschkenntnissen Termine und Bestellungen per E-Mail anfragt. Wenn Sie bestätigen, schickt Lilo Ihnen keine neuen Anfragen mehr.</p>
+      <p class="muted">Nachrichten zu einem bereits vereinbarten Termin oder einer bestehenden Bestellung, zum Beispiel eine Absage, erhalten Sie weiterhin.</p>
+      <button class="btn" type="button" id="confirm">Abmelden bestätigen</button>
+      <p class="error" id="failed" hidden role="alert">Das hat leider nicht geklappt. Bitte versuchen Sie es noch einmal oder schreiben Sie an <a href="mailto:kontakt@liloapp.de">kontakt@liloapp.de</a>.</p>
+    </div>
+    <div class="card" id="done" hidden>
+      <h1>Sie erhalten keine Anfragen mehr über Lilo.</h1>
+    </div>
+    <div class="card" id="invalid" hidden>
+      <h1>Dieser Link ist unvollständig</h1>
+      <p>Bitte öffnen Sie den Link „Hier abmelden“ direkt aus der E-Mail von Lilo, oder schreiben Sie an <a href="mailto:kontakt@liloapp.de">kontakt@liloapp.de</a>. Wir tragen Sie dann von Hand aus.</p>
+    </div>
+  </div>
+</main>
+<footer><div class="wrap"><a href="/unternehmen">Was Lilo ist</a><a href="/impressum.html">Impressum</a><a href="/datenschutz.html">Datenschutz</a></div></footer>
+<script>
+(function () {
+  // Lilo's server function in Supabase (Frankfurt). Public address, no key.
+  var endpoint = 'https://zsjsussggibobzlcntig.supabase.co/functions/v1/optout';
+  var code = decodeURIComponent((location.hash || '').slice(1));
+  var ask = document.getElementById('ask');
+  var done = document.getElementById('done');
+  var invalid = document.getElementById('invalid');
+  var failed = document.getElementById('failed');
+  var button = document.getElementById('confirm');
+
+  if (!/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(code)) {
+    ask.hidden = true;
+    invalid.hidden = false;
+    return;
+  }
+
+  button.addEventListener('click', function () {
+    button.disabled = true;
+    failed.hidden = true;
+    fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: code })
+    })
+      .then(function (response) {
+        if (response.ok) {
+          ask.hidden = true;
+          done.hidden = false;
+          // The code leaves the address bar, so it is not kept in the history.
+          history.replaceState(null, '', location.pathname);
+        } else if (response.status === 400) {
+          ask.hidden = true;
+          invalid.hidden = false;
+        } else {
+          throw new Error('not saved');
+        }
+      })
+      .catch(function () {
+        failed.hidden = false;
+        button.disabled = false;
+      });
+  });
+})();
+</script>
+</body>
+</html>
