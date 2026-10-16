@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Antworten · Lilo</title>
+<!--
+  Step 13e of the Lilo app: one-tap answers in emails.
+  The buttons in Lilo's emails to businesses link here as
+  liloapp.de/antwort#[button].[code]. The part after "#" never reaches this
+  website's server. The page asks Lilo's server function "answer" (Supabase,
+  Frankfurt) what to show. Opening the page sends nothing: only the "Senden"
+  button does. No cookies, no tracking, nothing stored in the browser.
+-->
+<style>
+:root {
+  --bg: #F4F3EF;
+  --surface: #FFFFFF;
+  --fg: #1D1C1A;
+  --muted: #6A665F;
+  --line: #E3E0DA;
+  --accent: #0E6B5C;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #0E6B5C1A;
+  --note: #9A5B00;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161615; --surface: #222120; --fg: #EDEBE6; --muted: #A39F97; --line: #34322F;
+    --accent: #5CC0AC; --accent-ink: #0D1F1B; --accent-soft: #5CC0AC1F; --note: #E0A54A; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161615; --surface: #222120; --fg: #EDEBE6; --muted: #A39F97; --line: #34322F;
+  --accent: #5CC0AC; --accent-ink: #0D1F1B; --accent-soft: #5CC0AC1F; --note: #E0A54A; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 1.0625rem; line-height: 1.55; }
+a { color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.top { border-bottom: 1px solid var(--line); }
+.top .wrap { min-height: 60px; display: flex; align-items: center; }
+.wrap { max-width: 640px; margin: 0 auto; padding-inline: 20px; }
+.brand { font-weight: 700; font-size: 1.375rem; letter-spacing: -0.02em; color: var(--fg); text-decoration: none; }
+main { padding-block: 40px 64px; }
+.card { background: var(--surface); border-radius: 18px; padding: 28px 24px; display: grid; gap: 16px; }
+h1 { margin: 0; font-size: 1.625rem; line-height: 1.2; letter-spacing: -0.01em; text-wrap: balance; }
+h2 { margin: 0; font-size: 1.0625rem; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.small { font-size: 0.9375rem; }
+.request { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; display: grid; gap: 2px; }
+.request strong { font-weight: 600; }
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; min-width: 0; }
+legend { padding: 0; margin-bottom: 10px; font-weight: 600; }
+.choices { display: grid; gap: 8px; }
+.choice { display: flex; gap: 12px; align-items: center; min-height: 48px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
+.choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.choice input { width: 20px; height: 20px; margin: 0; accent-color: var(--accent); flex: none; }
+.pick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+label.field { display: grid; gap: 6px; font-size: 0.9375rem; color: var(--muted); }
+input[type="date"], input[type="time"], input[type="text"], textarea {
+  font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 12px;
+  padding: 10px 12px; min-height: 48px; width: 100%;
+}
+textarea { min-height: 96px; resize: vertical; }
+.offer { background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; font-size: 0.9375rem; }
+.actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 26px; border-radius: 14px; border: 0; font: inherit; font-weight: 600; cursor: pointer; background: var(--accent); color: var(--accent-ink); }
+.btn:hover { filter: brightness(1.08); }
+.btn[disabled] { opacity: .6; cursor: default; }
+.link { background: none; border: 0; padding: 0; font: inherit; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.sent { white-space: pre-wrap; background: var(--bg); border-radius: 12px; padding: 14px 16px; font-size: 0.9375rem; }
+.error { color: var(--note); }
+[hidden] { display: none !important; }
+footer { border-top: 1px solid var(--line); padding-block: 24px 40px; font-size: 0.875rem; }
+footer .wrap { display: flex; gap: 20px; flex-wrap: wrap; }
+@media (max-width: 520px) { .wrap { padding-inline: 16px; } main { padding-block: 24px 48px; } .card { padding: 22px 18px; } .pick { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="brand" href="/">Lilo</a></div></header>
+<main>
+  <div class="wrap">
+    <div class="card" id="loading" aria-live="polite"><p class="muted">Einen Moment bitte …</p></div>
+
+    <form class="card" id="form" hidden novalidate>
+      <h1 id="title">Termin anbieten</h1>
+      <div class="request">
+        <strong id="topic"></strong>
+        <span class="muted small" id="wish" hidden></span>
+      </div>
+      <p class="muted small" id="about"></p>
+
+      <div id="part-time" hidden>
+        <fieldset>
+          <legend id="time-legend">Welchen Termin können Sie anbieten?</legend>
+          <div class="choices" id="slots"></div>
+          <label class="choice" id="other-choice"><input type="radio" name="slot" value="other"><span id="other-label">Anderer Termin</span></label>
+          <div class="pick" id="pick" hidden>
+            <label class="field">Tag<input type="date" id="date"></label>
+            <label class="field">Uhrzeit<input type="time" id="time" step="300"></label>
+          </div>
+        </fieldset>
+        <label class="field" id="price-field" hidden style="margin-top:16px">Preis (freiwillig), zum Beispiel „38 €“<input type="text" id="price" maxlength="40" autocomplete="off"></label>
+      </div>
+
+      <fieldset id="part-reasons" hidden>
+        <legend>Warum ist es nicht möglich?</legend>
+        <div class="choices" id="reasons"></div>
+      </fieldset>
+
+      <label class="field">Hinweis (freiwillig)<textarea id="note" maxlength="500" placeholder="Zum Beispiel: Bitte Fahrzeugschein mitbringen."></textarea></label>
+
+      <p class="offer" id="offer"></p>
+      <p class="error" id="form-error" hidden role="alert"></p>
+      <div class="actions">
+        <button class="btn" type="submit" id="send">Senden</button>
+        <button class="link" type="button" id="switch"></button>
+      </div>
+    </form>
+
+    <div class="card" id="answered" hidden>
+      <h1 id="answered-title">Ihre Antwort ist angekommen</h1>
+      <p id="answered-text">Lilo übersetzt sie jetzt. Sie erhalten eine E-Mail, sobald die Entscheidung gefallen ist.</p>
+      <p class="muted small" id="answered-when"></p>
+      <div class="sent" id="answered-body"></div>
+    </div>
+
+    <div class="card" id="note-card" hidden>
+      <h1 id="note-title"></h1>
+      <p id="note-text"></p>
+    </div>
+  </div>
+</main>
+<footer><div class="wrap"><a href="/unternehmen">Was Lilo ist</a><a href="/impressum.html">Impressum</a><a href="/datenschutz.html">Datenschutz</a></div></footer>
+<script>
+(function () {
+  // Lilo's server function in Supabase (Frankfurt). Public address, no key.
+  var endpoint = 'https://zsjsussggibobzlcntig.supabase.co/functions/v1/answer';
+  var contact = '<a href="mailto:kontakt@liloapp.de">kontakt@liloapp.de</a>';
+  var match = decodeURIComponent((location.hash || '').slice(1)).match(/^(termin|annehmen|absage)\.([A-Za-z0-9_-]{43})$/);
+  var $ = function (id) { return document.getElementById(id); };
+  var data = null;
+  var mode = null;
+
+  // Friendly notes for every case in which nothing can be sent.
+  var notes = {
+    invalid: ['Dieser Link ist unvollständig', 'Bitte öffnen Sie den Knopf direkt aus der E-Mail von Lilo, oder antworten Sie einfach auf die E-Mail.'],
+    expired: ['Dieser Link ist abgelaufen', 'Die Knöpfe in Lilos E-Mails gelten 30 Tage. Antworten Sie gern einfach auf die E-Mail: Lilo leitet Ihre Antwort weiter.'],
+    superseded: ['Es gibt eine neuere E-Mail', 'Zu dieser Anfrage hat Lilo Ihnen inzwischen eine neuere E-Mail geschrieben. Bitte nutzen Sie die Knöpfe dort, oder antworten Sie einfach auf die E-Mail.'],
+    agreed: ['Schon vereinbart', 'Zu dieser Anfrage ist bereits alles vereinbart. Für eine Änderung antworten Sie bitte auf die letzte E-Mail von Lilo.'],
+    cancelled: ['Diese Anfrage wurde abgesagt', 'Sie müssen nichts mehr tun. Vielen Dank.'],
+    closed: ['Diese Anfrage ist abgeschlossen', 'Sie müssen nichts mehr tun. Vielen Dank.'],
+    error: ['Das hat leider nicht geklappt', 'Bitte laden Sie die Seite später noch einmal oder antworten Sie einfach auf die E-Mail. Bei Fragen: ' + contact + '.']
+  };
+
+  function only(id) {
+    ['loading', 'form', 'answered', 'note-card'].forEach(function (card) { $(card).hidden = card !== id; });
+  }
+
+  function showNote(state) {
+    var note = notes[state] || notes.error;
+    $('note-title').textContent = note[0];
+    $('note-text').innerHTML = note[1];
+    only('note-card');
+  }
+
+  // "Mo., 19. Oktober, 10:00 Uhr" from a date and a time.
+  function slotLabel(slot) {
+    var parts = slot.date.split('-');
+    var day = new Date(Date.UTC(+parts[0], +parts[1] - 1, +parts[2], 12));
+    var text = new Intl.DateTimeFormat('de-DE', { weekday: 'short', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(day);
+    return text + ', ' + slot.time + ' Uhr';
+  }
+
+  function showAnswered(answer, fresh) {
+    $('answered-title').textContent = fresh ? 'Ihre Antwort ist angekommen' : 'Diese Antwort wurde bereits gesendet';
+    $('answered-text').textContent = answer.answer === 'decline'
+      ? 'Vielen Dank, dass Sie Bescheid gegeben haben. Sie müssen nichts mehr tun.'
+      : 'Es ist ein Angebot: Vereinbart ist erst, was bestätigt wird. Sie erhalten dann eine E-Mail von Lilo.';
+    var when = new Date(answer.answered_at);
+    $('answered-when').textContent = 'Gesendet am ' + new Intl.DateTimeFormat('de-DE', { dateStyle: 'long', timeStyle: 'short', timeZone: 'Europe/Berlin' }).format(when) + ' Uhr:';
+    $('answered-body').textContent = answer.answer_de || '';
+    only('answered');
+  }
+
+  function call(body) {
+    return fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (response) {
+      return response.json().catch(function () { return {}; }).then(function (json) {
+        json.httpStatus = response.status;
+        return json;
+      });
+    });
+  }
+
+  function setMode(next) {
+    mode = next;
+    var order = data.kind === 'order';
+    var name = data.name || 'die Person, für die Lilo schreibt';
+    var declining = mode === 'absage';
+    $('title').textContent = declining ? 'Leider nicht möglich' : order ? 'Bestellung annehmen' : 'Termin anbieten';
+    $('part-time').hidden = declining;
+    $('part-reasons').hidden = !declining;
+    $('price-field').hidden = declining || !order;
+    $('time-legend').textContent = order ? 'Ab wann ist die Bestellung abholbereit?' : 'Welchen Termin können Sie anbieten?';
+    $('offer').textContent = declining
+      ? 'Lilo gibt Ihre Antwort an ' + name + ' weiter. Sie müssen danach nichts mehr tun.'
+      : order
+        ? 'Ihre Zusage ist ein Angebot. Verbindlich wird die Bestellung erst, wenn ' + name + ' sie bestätigt. Sie erhalten dann eine E-Mail von Lilo.'
+        : 'Ihr Terminvorschlag ist ein Angebot. Vereinbart ist der Termin erst, wenn ' + name + ' ihn bestätigt. Sie erhalten dann eine E-Mail von Lilo.';
+    $('switch').textContent = declining ? (order ? 'Doch annehmen' : 'Doch einen Termin anbieten') : 'Leider nicht möglich';
+    $('note').placeholder = declining
+      ? 'Zum Beispiel: Ab November gern wieder.'
+      : order ? 'Zum Beispiel: Bitte 10 € Anzahlung im Laden.' : 'Zum Beispiel: Bitte Fahrzeugschein mitbringen.';
+    $('form-error').hidden = true;
+  }
+
+  function radio(name, value, label, checked) {
+    var wrap = document.createElement('label');
+    wrap.className = 'choice';
+    var input = document.createElement('input');
+    input.type = name === 'reason' ? 'checkbox' : 'radio';
+    input.name = name;
+    input.value = value;
+    input.checked = Boolean(checked);
+    var text = document.createElement('span');
+    text.textContent = label;
+    wrap.appendChild(input);
+    wrap.appendChild(text);
+    return wrap;
+  }
+
+  function showForm() {
+    var order = data.kind === 'order';
+    // A link for the other kind of request opens the right form.
+    var start = match[1] === 'absage' ? 'absage' : order ? 'annehmen' : 'termin';
+    $('topic').textContent = (order ? 'Bestellung' : 'Anfrage') + (data.name ? ' für ' + data.name : '') + (data.topic ? ': ' + data.topic : '');
+    if (data.wish_de) {
+      $('wish').textContent = (order ? 'Gewünschte Abholung: ' : 'Gewünscht: ') + data.wish_de;
+      $('wish').hidden = false;
+    }
+    $('about').textContent = data.name
+      ? 'Lilo ist ein KI-Assistent und schreibt im Auftrag von ' + data.name + '. Ihre Antwort wird für ' + data.name + ' übersetzt, und ' + data.name + ' entscheidet selbst.'
+      : 'Lilo ist ein KI-Assistent und schreibt im Auftrag einer Person mit wenig Deutschkenntnissen. Ihre Antwort wird übersetzt, und die Person entscheidet selbst.';
+
+    var slots = $('slots');
+    (data.slots || []).forEach(function (slot, index) {
+      slots.appendChild(radio('slot', slot.date + ' ' + slot.time, slotLabel(slot), index === 0));
+    });
+    $('other-label').textContent = data.slots && data.slots.length ? (order ? 'Anderer Zeitpunkt' : 'Anderer Termin') : (order ? 'Zeitpunkt wählen' : 'Termin wählen');
+    if (!data.slots || !data.slots.length) {
+      $('other-choice').querySelector('input').checked = true;
+      $('pick').hidden = false;
+    }
+    $('date').min = data.today;
+    if (data.slots && data.slots[0]) { $('date').value = data.slots[0].date; $('time').value = data.slots[0].time; }
+    $('part-time').addEventListener('change', function () {
+      var chosen = document.querySelector('input[name="slot"]:checked');
+      $('pick').hidden = !(chosen && chosen.value === 'other');
+    });
+
+    var reasons = $('reasons');
+    (data.reasons || []).forEach(function (reason) { reasons.appendChild(radio('reason', reason.id, reason.label, false)); });
+
+    $('switch').addEventListener('click', function () {
+      setMode(mode === 'absage' ? (order ? 'annehmen' : 'termin') : 'absage');
+    });
+    $('form').addEventListener('submit', submit);
+    setMode(start);
+    only('form');
+  }
+
+  function fail(text) {
+    $('form-error').textContent = text;
+    $('form-error').hidden = false;
+  }
+
+  function submit(event) {
+    event.preventDefault();
+    var body = { action: 'send', code: match[2], button: mode, note: $('note').value.trim() };
+    if (mode === 'absage') {
+      body.reasons = Array.prototype.map.call(document.querySelectorAll('input[name="reason"]:checked'), function (input) { return input.value; });
+      if (!body.reasons.length && !body.note) return fail('Bitte wählen Sie einen Grund oder schreiben Sie einen kurzen Hinweis.');
+    } else {
+      var chosen = document.querySelector('input[name="slot"]:checked');
+      if (chosen && chosen.value !== 'other') {
+        body.date = chosen.value.split(' ')[0];
+        body.time = chosen.value.split(' ')[1];
+      } else {
+        body.date = $('date').value;
+        body.time = $('time').value;
+      }
+      if (!body.date || !body.time) return fail('Bitte wählen Sie einen Tag und eine Uhrzeit.');
+      if (body.date < data.today) return fail('Bitte wählen Sie einen Tag ab heute.');
+      if (mode === 'annehmen') body.price = $('price').value.trim();
+    }
+    $('send').disabled = true;
+    $('form-error').hidden = true;
+    call(body)
+      .then(function (answer) {
+        if (answer.state === 'answered') return showAnswered(answer, answer.httpStatus === 200);
+        if (answer.state && answer.state !== 'open') return showNote(answer.state);
+        if (answer.error === 'need_time') return fail('Bitte wählen Sie einen Tag ab heute und eine Uhrzeit.');
+        if (answer.error === 'need_reason') return fail('Bitte wählen Sie einen Grund oder schreiben Sie einen kurzen Hinweis.');
+        fail('Das hat leider nicht geklappt. Bitte versuchen Sie es noch einmal oder antworten Sie einfach auf die E-Mail.');
+      })
+      .catch(function () {
+        fail('Das hat leider nicht geklappt. Bitte prüfen Sie die Internetverbindung und versuchen Sie es noch einmal.');
+      })
+      .then(function () { $('send').disabled = false; });
+  }
+
+  if (!match) return showNote('invalid');
+  // Only reads what to show. Nothing is sent before "Senden".
+  call({ action: 'look', code: match[2] })
+    .then(function (answer) {
+      if (answer.state === 'open') { data = answer; return showForm(); }
+      if (answer.state === 'answered') return showAnswered(answer, false);
+      showNote(answer.state || 'error');
+    })
+    .catch(function () { showNote('error'); });
+})();
+</script>
+</body>
+</html>
