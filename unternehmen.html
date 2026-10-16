@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Für Unternehmen · Lilo</title>
+<meta name="description" content="Was Lilo ist, wie eine Anfrage von Lilo aussieht, wie Sie antworten und wie Sie keine Anfragen mehr erhalten.">
+<!--
+  liloapp.de/unternehmen: every email Lilo sends to a business links here
+  ("Was Lilo ist"). Plain information for businesses. No cookies, no tracking,
+  no forms, no outside fonts. Promise nothing here that is not built yet.
+-->
+<style>
+:root {
+  --bg: #F4F3EF;
+  --surface: #FFFFFF;
+  --fg: #1D1C1A;
+  --muted: #6A665F;
+  --line: #E3E0DA;
+  --accent: #0E6B5C;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #0E6B5C1A;
+  --note: #9A5B00;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161615; --surface: #222120; --fg: #EDEBE6; --muted: #A39F97; --line: #34322F;
+    --accent: #5CC0AC; --accent-ink: #0D1F1B; --accent-soft: #5CC0AC1F; --note: #E0A54A; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161615; --surface: #222120; --fg: #EDEBE6; --muted: #A39F97; --line: #34322F;
+  --accent: #5CC0AC; --accent-ink: #0D1F1B; --accent-soft: #5CC0AC1F; --note: #E0A54A; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 1.0625rem; line-height: 1.6; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.wrap { max-width: 720px; margin: 0 auto; padding-inline: 20px; }
+.top { border-bottom: 1px solid var(--line); }
+.top .wrap { min-height: 60px; display: flex; align-items: center; }
+.brand { font-weight: 700; font-size: 1.375rem; letter-spacing: -0.02em; color: var(--fg); text-decoration: none; }
+main { padding-block: 48px 64px; }
+h1 { margin: 0; font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem); line-height: 1.15; letter-spacing: -0.02em; text-wrap: balance; }
+h2 { margin: 0 0 12px; font-size: 1.375rem; line-height: 1.25; letter-spacing: -0.01em; text-wrap: balance; }
+p { margin: 0; }
+p + p { margin-top: 12px; }
+.lead { margin-top: 16px; font-size: 1.25rem; line-height: 1.5; }
+.muted { color: var(--muted); }
+section { margin-top: 48px; }
+ul { margin: 0; padding-inline-start: 1.2em; display: grid; gap: 8px; }
+.mail { margin-top: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.mail-head { padding: 14px 20px; border-bottom: 1px solid var(--line); font-size: 0.9375rem; display: grid; gap: 2px; }
+.mail-head span { color: var(--muted); display: inline-block; min-width: 4.5em; }
+.mail-body { padding: 18px 20px 20px; display: grid; gap: 12px; }
+.mail-body .ai { padding: 10px 12px; border-radius: 10px; background: var(--accent-soft); }
+.mail-foot { padding: 12px 20px 16px; border-top: 1px solid var(--line); font-size: 0.875rem; color: var(--muted); }
+.note { margin-top: 12px; font-size: 0.9375rem; color: var(--muted); }
+.soon { display: inline-block; margin-inline-start: 6px; font-size: 0.75rem; font-weight: 600; color: var(--note); background: color-mix(in srgb, var(--note) 14%, transparent); border-radius: 10px; padding: 1px 8px; vertical-align: 2px; }
+footer { border-top: 1px solid var(--line); padding-block: 24px 40px; font-size: 0.875rem; }
+footer .wrap { display: flex; gap: 20px; flex-wrap: wrap; }
+@media (max-width: 520px) { .wrap { padding-inline: 16px; } main { padding-block: 32px 48px; } section { margin-top: 40px; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="brand" href="/">Lilo</a></div></header>
+<main>
+<div class="wrap">
+
+  <h1>Sie haben eine Anfrage über Lilo erhalten?</h1>
+  <p class="lead">Lilo hilft Menschen, die noch wenig Deutsch sprechen, bei Ihnen einen Termin zu vereinbaren oder etwas zum Abholen zu bestellen. Hinter jeder Anfrage steht ein echter Mensch.</p>
+  <p class="note">Lilo ist ein KI-Assistent und befindet sich im Testbetrieb in Dinslaken.</p>
+
+  <section aria-labelledby="h-aussehen">
+    <h2 id="h-aussehen">So sieht eine Anfrage aus</h2>
+    <p>Schon der Absender zeigt, dass ein KI-Assistent schreibt und für wen. Am Anfang steht, für wen und warum Lilo schreibt, am Ende noch einmal der Hinweis auf den KI-Assistenten.</p>
+    <div class="mail" role="figure" aria-label="Beispiel einer Anfrage von Lilo">
+      <div class="mail-head">
+        <div><span>Von:</span> Lilo (KI-Assistent) für Ayşe Demir</div>
+        <div><span>Betreff:</span> Anfrage für Ayşe Demir: Haarschnitt</div>
+      </div>
+      <div class="mail-body">
+        <p>Guten Tag, ich schreibe Ihnen im Auftrag von Ayşe Demir. Ayşe Demir spricht noch wenig Deutsch, deshalb übernehme ich die Anfrage.</p>
+        <p>Ayşe Demir möchte gern einen Termin für einen Haarschnitt, am liebsten nächste Woche vormittags. Hätten Sie einen Termin frei?</p>
+        <p class="ai">Zur Information: Ich bin Lilo, ein KI-Assistent. Ihre Antwort wird für Ayşe Demir übersetzt, und Ayşe Demir entscheidet selbst.</p>
+        <p>Lilo für Ayşe Demir</p>
+      </div>
+      <div class="mail-foot">Unter jeder E-Mail: ein Link zu dieser Seite und „Hier abmelden“.</div>
+    </div>
+    <p class="note">Ein erfundenes Beispiel.</p>
+  </section>
+
+  <section aria-labelledby="h-antworten">
+    <h2 id="h-antworten">So antworten Sie</h2>
+    <ul>
+      <li>Antworten Sie einfach per E-Mail, auf Deutsch, so wie Sie jeder Kundin und jedem Kunden antworten würden.</li>
+      <li>Lilo übersetzt Ihre Antwort in die Sprache der Person. Sie brauchen kein Programm und kein Konto.</li>
+      <li>Ein Termin, den Sie nennen, ist ein Angebot. Erst wenn die Person zusagt, bestätigt Lilo ihn Ihnen per E-Mail. Lilo sagt nie etwas zu, ohne dass die Person zugestimmt hat.</li>
+      <li>Wenn der Termin doch nicht passt, schickt Lilo Ihnen eine Absage oder bittet um einen anderen Termin.</li>
+      <li>Antworten mit einem Klick, direkt aus der E-Mail <span class="soon">in Vorbereitung</span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-nicht">
+    <h2 id="h-nicht">Was Lilo nicht tut</h2>
+    <ul>
+      <li>Lilo schaut nicht in Ihren Kalender. Lilo fragt nur nach freien Zeiten.</li>
+      <li>Lilo schickt Ihnen keine Werbung. Die Anfragen enthalten nur das Anliegen der Person.</li>
+      <li>Lilo kostet Sie nichts.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-abmelden">
+    <h2 id="h-abmelden">Keine Anfragen mehr erhalten</h2>
+    <p>Unter jeder E-Mail von Lilo steht der Link „Hier abmelden“. Ein Klick und eine Bestätigung genügen, danach schickt Lilo Ihnen keine neuen Anfragen mehr. Sie können auch an <a href="mailto:kontakt@liloapp.de">kontakt@liloapp.de</a> schreiben, dann tragen wir Sie von Hand aus.</p>
+    <p>Nachrichten zu einem bereits vereinbarten Termin oder einer bestehenden Bestellung, zum Beispiel eine Absage, erhalten Sie weiterhin.</p>
+  </section>
+
+  <section aria-labelledby="h-adresse">
+    <h2 id="h-adresse">Woher Lilo Ihre Adresse hat</h2>
+    <p>Lilo findet Ihren Betrieb über die Suche auf Google Maps und verwendet die E-Mail-Adresse, die Sie auf Ihrer eigenen Website veröffentlicht haben. Wenn Sie sich abmelden, speichert Lilo diese Adresse auf einer Sperrliste, damit Sie wirklich keine Anfragen mehr erhalten.</p>
+  </section>
+
+  <section aria-labelledby="h-anrufe">
+    <h2 id="h-anrufe">Und Anrufe?</h2>
+    <p>Lilo schreibt heute nur E-Mails. Anrufe sind für später geplant. Auch dann sagt Lilo gleich zu Beginn, für wen und warum angerufen wird und dass ein KI-Assistent spricht.</p>
+  </section>
+
+  <section aria-labelledby="h-kontakt">
+    <h2 id="h-kontakt">Fragen?</h2>
+    <p>Schreiben Sie an <a href="mailto:kontakt@liloapp.de">kontakt@liloapp.de</a>. Hinter Lilo steht Navin Raghupathy aus Dinslaken; alle Angaben finden Sie im <a href="/impressum.html">Impressum</a>.</p>
+  </section>
+
+</div>
+</main>
+<footer><div class="wrap"><a href="/">Lilo</a><a href="/impressum.html">Impressum</a><a href="/datenschutz.html">Datenschutz</a></div></footer>
+</body>
+</html>
