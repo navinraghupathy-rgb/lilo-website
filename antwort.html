@@ -206,20 +206,24 @@ footer .wrap { display: flex; gap: 20px; flex-wrap: wrap; }
     var order = data.kind === 'order';
     var name = data.name || 'die Person, für die Lilo schreibt';
     var declining = mode === 'absage';
-    $('title').textContent = declining ? 'Leider nicht möglich' : order ? 'Bestellung annehmen' : 'Termin anbieten';
+    // A table at a restaurant (5 November 2026): "Reservierung" instead of "Termin".
+    var table = !order && data.table === true;
+    $('title').textContent = declining ? 'Leider nicht möglich' : order ? 'Bestellung annehmen' : table ? 'Reservierung bestätigen' : 'Termin anbieten';
     $('part-time').hidden = declining;
     $('part-reasons').hidden = !declining;
     $('price-field').hidden = declining || !order;
-    $('time-legend').textContent = order ? 'Ab wann ist die Bestellung abholbereit?' : 'Welchen Termin können Sie anbieten?';
+    $('time-legend').textContent = order ? 'Ab wann ist die Bestellung abholbereit?' : table ? 'Für wann können Sie den Tisch reservieren?' : 'Welchen Termin können Sie anbieten?';
     $('offer').textContent = declining
       ? 'Lilo gibt Ihre Antwort an ' + name + ' weiter. Sie müssen danach nichts mehr tun.'
       : order
         ? 'Ihre Zusage ist ein Angebot. Verbindlich wird die Bestellung erst, wenn ' + name + ' sie bestätigt. Sie erhalten dann eine E-Mail von Lilo.'
-        : 'Ihr Terminvorschlag ist ein Angebot. Vereinbart ist der Termin erst, wenn ' + name + ' ihn bestätigt. Sie erhalten dann eine E-Mail von Lilo.';
-    $('switch').textContent = declining ? (order ? 'Doch annehmen' : 'Doch einen Termin anbieten') : 'Leider nicht möglich';
+        : table
+          ? 'Ihre Zusage ist ein Angebot. Verbindlich wird die Reservierung erst, wenn ' + name + ' sie bestätigt. Sie erhalten dann eine E-Mail von Lilo.'
+          : 'Ihr Terminvorschlag ist ein Angebot. Vereinbart ist der Termin erst, wenn ' + name + ' ihn bestätigt. Sie erhalten dann eine E-Mail von Lilo.';
+    $('switch').textContent = declining ? (order ? 'Doch annehmen' : table ? 'Doch eine Reservierung bestätigen' : 'Doch einen Termin anbieten') : 'Leider nicht möglich';
     $('note').placeholder = declining
       ? 'Zum Beispiel: Ab November gern wieder.'
-      : order ? 'Zum Beispiel: Bitte 10 € Anzahlung im Laden.' : 'Zum Beispiel: Bitte Fahrzeugschein mitbringen.';
+      : order ? 'Zum Beispiel: Bitte 10 € Anzahlung im Laden.' : table ? 'Zum Beispiel: Der Tisch ist bis 21:30 Uhr frei.' : 'Zum Beispiel: Bitte Fahrzeugschein mitbringen.';
     $('form-error').hidden = true;
   }
 
@@ -255,7 +259,10 @@ footer .wrap { display: flex; gap: 20px; flex-wrap: wrap; }
     (data.slots || []).forEach(function (slot, index) {
       slots.appendChild(radio('slot', slot.date + ' ' + slot.time, slotLabel(slot), index === 0));
     });
-    $('other-label').textContent = data.slots && data.slots.length ? (order ? 'Anderer Zeitpunkt' : 'Anderer Termin') : (order ? 'Zeitpunkt wählen' : 'Termin wählen');
+    var table = !order && data.table === true;
+    $('other-label').textContent = data.slots && data.slots.length
+      ? (order ? 'Anderer Zeitpunkt' : table ? 'Andere Uhrzeit' : 'Anderer Termin')
+      : (order ? 'Zeitpunkt wählen' : table ? 'Uhrzeit wählen' : 'Termin wählen');
     if (!data.slots || !data.slots.length) {
       $('other-choice').querySelector('input').checked = true;
       $('pick').hidden = false;
